@@ -9,5 +9,14 @@ class SpeedRadar:
         self.bDistanceA = 1
 
     def averageSpeed(self):
-        speedMS = round(self.bDistanceA/((self.timeA - self.timeB)), 2)
-        print("M/s: ",speedMS,"KM/h: ",speedMS*3.6)
+        deltaT = self.timeA - self.timeB 
+        speedMS = self.bDistanceA / deltaT
+        speedKmH = speedMS * 3.6
+        print("m/s: ",round(speedMS, 2),"Km/h: ",round(speedKmH, 2))
+        self.reset()
+
+        return speedKmH
+        
+    def reset(self):
+        self.timeA = 0
+        self.timeB = 0

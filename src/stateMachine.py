@@ -70,4 +70,4 @@ class StateMachine:
                     
         except BaseException as err:
             print(f"->ERROR: {err}")
-            # self.stop()
+            self.stop()
