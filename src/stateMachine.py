@@ -1,6 +1,7 @@
 from time import sleep
 import RPi.GPIO as GPIO
 from time import time
+from constants import teste
 
 class StateMachine:
     
@@ -11,6 +12,7 @@ class StateMachine:
         self.states = []
         self.countdown = 0
         self.cross = cross
+        self.running = False
 
     def add_state(self, sem1, sem2, timer):
         self.states.append((sem1, sem2, timer))
@@ -40,28 +42,32 @@ class StateMachine:
         self.currentState = self.states[self.idxState]
         self.countdown = self.currentState[2]
         self.controller(self.currentState[0], self.currentState[1])
+    
+    def stop(self):
+        self.running = False
+        
+        GPIO.output(self.cross.trafficLight1, False)
+        GPIO.output(self.cross.trafficLight2, False)
+        GPIO.remove_event_detect(self.cross.btns[0])
+        GPIO.remove_event_detect(self.cross.btns[1])
+        GPIO.remove_event_detect(self.cross.sensor[0])
+        GPIO.remove_event_detect(self.cross.sensor[1])
+        GPIO.remove_event_detect(self.cross.radar1.sensorA)
+        GPIO.remove_event_detect(self.cross.radar1.sensorB)
+        GPIO.remove_event_detect(self.cross.radar2.sensorA)
+        GPIO.remove_event_detect(self.cross.radar2.sensorB)
+
+        GPIO.cleanup()
         
 
     def run(self):
+        self.running = True
         try:
             self.set_start()
-            while True:
+            while self.running:
                 if time() - self.startTimer >= self.countdown:
                     self.transiction()
-
                     
         except BaseException as err:
-            sleep(1)
             print(f"->ERROR: {err}")
-            GPIO.output(self.cross.trafficLight1, False)
-            GPIO.output(self.cross.trafficLight2, False)
-            GPIO.remove_event_detect(self.cross.btns[0])
-            GPIO.remove_event_detect(self.cross.btns[1])
-            GPIO.remove_event_detect(self.cross.sensor[0])
-            GPIO.remove_event_detect(self.cross.sensor[1])
-            GPIO.remove_event_detect(self.cross.radar1.sensorA)
-            GPIO.remove_event_detect(self.cross.radar1.sensorB)
-            GPIO.remove_event_detect(self.cross.radar2.sensorA)
-            GPIO.remove_event_detect(self.cross.radar2.sensorB)
-
-            GPIO.cleanup()
+            # self.stop()

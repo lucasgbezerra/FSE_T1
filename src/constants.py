@@ -30,3 +30,5 @@ speedSensor2C2 = [13, 19]
 # SENSOR DE PASSAGEM
 sensorC1 = [14, 15]
 sensorC2 = [4, 17]
+
+teste = True
