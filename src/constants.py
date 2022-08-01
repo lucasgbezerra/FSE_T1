@@ -11,7 +11,7 @@ MAX_RED_GREEN = 10
 MIN_RED_GREEN = 1
 BOTH_RED = 1
 
-# BOTÕES [1, 2]
+# BOTOES [1, 2]
 btnsC1 = [8, 7]
 btnsC2 = [10, 9]
 
