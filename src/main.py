@@ -4,6 +4,7 @@ from speedRadar import SpeedRadar
 from cross import Cross
 import RPi.GPIO as GPIO
 from threading import Thread
+from inputsDetect import *
 
 def setup(cross):
     try:
@@ -11,8 +12,29 @@ def setup(cross):
 
         GPIO.setup(cross.trafficLight1, GPIO.OUT)
         GPIO.setup(cross.trafficLight2, GPIO.OUT)
-    except:
-        print('Error')
+        # Setup sensores
+        GPIO.setup(cross.radar1.sensorA, GPIO.IN)
+        GPIO.setup(cross.radar1.sensorB, GPIO.IN)
+        GPIO.setup(cross.radar2.sensorA, GPIO.IN)
+        GPIO.setup(cross.radar2.sensorB, GPIO.IN)
+        GPIO.setup(cross.sensor[0], GPIO.IN, pull_up_down=GPIO.PUD_UP)
+        GPIO.setup(cross.sensor[1], GPIO.IN, pull_up_down=GPIO.PUD_UP)
+        
+        # Botões Cruzamento
+        GPIO.add_event_detect(cross.btns[0], GPIO.RISING, callback=lambda x: detectBtn(cross, sm), bouncetime=200)
+        GPIO.add_event_detect(cross.btns[1], GPIO.RISING, callback=lambda x: detectBtn(cross, sm), bouncetime=200)
+
+        # Sensores de velocidade
+        GPIO.add_event_detect(cross.radar1.sensorA, GPIO.FALLING, callback=lambda x: detectSpeedSensor(cross.radar1, sm.currentState), bouncetime=20)
+        GPIO.add_event_detect(cross.radar1.sensorB, GPIO.FALLING, callback=lambda x: detectSpeedSensor(cross.radar1, sm.currentState), bouncetime=20)
+        GPIO.add_event_detect(cross.radar2.sensorA, GPIO.FALLING, callback=lambda x: detectSpeedSensor(cross.radar2, sm.currentState), bouncetime=20)
+        GPIO.add_event_detect(cross.radar2.sensorB, GPIO.FALLING, callback=lambda x: detectSpeedSensor(cross.radar2, sm.currentState), bouncetime=20)
+
+        # Sensores de passagem
+        GPIO.add_event_detect(cross.sensor[0], GPIO.BOTH, callback=lambda x: detectPassSensor(cross, sm), bouncetime=20)
+        
+    except BaseException as err:
+        print(f"->ERROR: {err}")
 
 def setupStateMachine(sm):
     sm.add_state(consts.RED, consts.RED, consts.BOTH_RED)
@@ -47,5 +69,5 @@ threadC2 = Thread(target=runCross,args=(sm2, cross2))
 
 # Semaforo 1
 threadC2.start()
-runCross(sm1)
+runCross(sm1, cross1)
 
