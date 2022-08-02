@@ -32,3 +32,31 @@ sensorC1 = [14, 15]
 sensorC2 = [4, 17]
 
 teste = True
+
+connection = None
+
+# Modelo JSON
+info = {
+    "id": 1,
+    "numberCars": [
+        {
+        "road": "Auxiliar",
+        "cars": 0
+        },
+        {
+        "road": "Principal",
+        "cars": 0,
+        "avgSpeed": 0
+        }
+    ],
+     "infractions": [
+    {
+      "name": "Limite de velocidade",
+      "number": 0
+    },
+    {
+      "name": "Avanço de sinal vermelho",
+      "number": 0
+    }
+  ]
+}

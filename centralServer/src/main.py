@@ -1,3 +1,4 @@
+from client import clientProgram
 import constants as consts
 from stateMachine import StateMachine
 from speedRadar import SpeedRadar
@@ -70,21 +71,27 @@ sm1 = StateMachine(cross1)
 
 
 
-# def signalHandler(sig, frame):
+def signalHandler(sig, frame):
 #     sm1.stop()
 # #    sm2.stop()
 # #    threadC2.kill()
-#     sys.exit(0)
+    sm1.running = False
+    # sm2.running = False
+    global connection
+    connection.close()
+    sys.exit(0)
 
 # Tratamento signal
-# signal.signal(signal.SIGINT, signalHandler)
+signal.signal(signal.SIGINT, signalHandler)
 
 # Thread cruzamento 2
 #threadC2 = MyThread(target=runCross,args=(sm2, cross2))
 #threadC2.start()
+threadClient = MyThread(target=clientProgram)
 
 # Semaforo 1
+threadClient.start()
 runCross(sm1, cross1)
 
 #threadC2.join()
-
+threadClient.join()

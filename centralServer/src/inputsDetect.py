@@ -16,20 +16,29 @@ def detectBtn(cross, state):
 
 def detectSpeedSensorA(speedRadar, currentState):
     sensorA = GPIO.input(speedRadar.sensorA)
-    if sensorA == 0:
+    if sensorA == 1:
         speedRadar.timeA = time.time()
         speed = speedRadar.averageSpeed()
-
+        
+        if info['numberCars'][1]['cars'] == 0:
+            info['numberCars'][1]['cars'] += 1
+            info['numberCars'][1]['avgSpeed'] += speed
+        else:
+            info['numberCars'][1]['cars'] += 1
+            info['numberCars'][1]['avgSpeed'] = (info['numberCars'][1]['avgSpeed'] +speed)/2
         if currentState[0] == RED:
             print("Furou sinal")
+            info['infractions'][1]['number'] += 1
         if speed > speedRadar.speedLimit:
             print("Acima do limite de velocidade")
+            info['infractions'][0]['number'] += 1
+            
 
 
 def detectSpeedSensorB(speedRadar):
     sensorB = GPIO.input(speedRadar.sensorB)
    
-    if sensorB == 0:
+    if sensorB == 1:
         speedRadar.timeB = time.time()
 
 def detectPassSensor(cross, state):

@@ -67,7 +67,8 @@ class StateMachine:
             while self.running:
                 if time() - self.startTimer >= self.countdown:
                     self.transiction()
-                    
+            print("Stop")
+            self.stop()     
         except BaseException as err:
             print(f"->ERROR: {err}")
-            self.stop()
+            # self.stop()
