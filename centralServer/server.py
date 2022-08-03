@@ -34,14 +34,14 @@ def signalHandler(sig, frame):
     sys.exit(0)
 
 def socketTcp():
-    port = 50000
+    port = 10261
 
     # Instancia do server
     serverSocket = socket.socket()
     # Servidor escuta requisições de qualquer ip
     serverSocket.bind(('', port))
     # Socket no modo listen
-    serverSocket.listen(3)
+    serverSocket.listen(5)
 
     # while True:
     print("Esperando por uma conexão")
