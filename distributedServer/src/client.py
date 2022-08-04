@@ -1,28 +1,39 @@
 import socket
 import json
 from time import sleep
-from constants import connection, info
+from constants import serverConnection, info
 
-serverConnection = True
+command = 'P'
+clientSocket = None
 
-def clientProgram():
-    host = '192.168.0.118'  # as both code is running on same pc
-    port = 10261  # socket server port number
+def responseHandle(stateMachine, data):
+    global command
+    command = data
+    stateMachine.countdown = 0
+    stateMachine.startTimer = 0
+    stateMachine.mode = data
+        
+def clientProgram(stateMachine, host, port):
+    global clientSocket
+    global command
     
     clientSocket = socket.socket()  # instantiate
     
+    message = {"Connect": True}
     clientSocket.connect((host, port))  # connect to the server
-    global connection
-    connection = clientSocket
-
-
-    while serverConnection:
-        message = json.dumps(info)
+    clientSocket.send(json.dumps(message).encode())  # send message
+    while True:
         
-        clientSocket.send(message.encode())  # send message
-        data = clientSocket.recv(1024).decode()  # receive response
+        data = clientSocket.recv(1024).decode() # receive response
+        if data != command:
+            responseHandle(stateMachine, data)
 
-        print('Mensagem do SERVER: ' + data)  # show in terminal
-        sleep(2)
 
+def infoToSever(info):
+    global clientSocket
+    if clientSocket != None:
+        print("Sending infor")
+        clientSocket.send(json.dumps(info).encode())
+        
+def closeClient():      
     clientSocket.close()  # close the connection

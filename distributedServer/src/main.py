@@ -1,3 +1,4 @@
+from concurrent.futures import thread
 from client import clientProgram
 import constants as consts
 from stateMachine import StateMachine
@@ -7,9 +8,12 @@ import RPi.GPIO as GPIO
 from inputsDetect import *
 import signal
 import sys
-import os
+from threading import Thread
+import json
+from socketTcp import socketTcp
 
-def setup(cross, sm):
+
+def setupGPIO(cross, sm):
     try:
         GPIO.setmode(GPIO.BCM)
 
@@ -43,55 +47,63 @@ def setup(cross, sm):
         print(f"->ERROR: {err}")
 
 def setupStateMachine(sm):
-    sm.add_state(consts.RED, consts.RED, consts.BOTH_RED)
-    sm.add_state(consts.GREEN, consts.RED, consts.MAX_GREEN_RED)
-    sm.add_state(consts.YELLOW, consts.RED, consts.MIN_MAX_YELLOW)
-    sm.add_state(consts.RED, consts.RED, consts.BOTH_RED)
-    sm.add_state(consts.RED, consts.GREEN, consts.MAX_RED_GREEN)
-    sm.add_state(consts.RED, consts.YELLOW, consts.MIN_MAX_YELLOW)
+    sm.addState(consts.RED, consts.RED, consts.BOTH_RED)
+    sm.addState(consts.GREEN, consts.RED, consts.MAX_GREEN_RED)
+    sm.addState(consts.YELLOW, consts.RED, consts.MIN_MAX_YELLOW)
+    sm.addState(consts.RED, consts.RED, consts.BOTH_RED)
+    sm.addState(consts.RED, consts.GREEN, consts.MAX_RED_GREEN)
+    sm.addState(consts.RED, consts.YELLOW, consts.MIN_MAX_YELLOW)
+    sm.addState(consts.RED, consts.YELLOW, consts.MIN_MAX_YELLOW)
+    sm.addState(consts.YELLOW, consts.YELLOW, consts.ATTENTION)
+    sm.addState(consts.OFF, consts.OFF, consts.ATTENTION)
 
 def runCross(sm, cross):
     setupStateMachine(sm)
-    setup(cross, sm)
+    setupGPIO(cross, sm)
     sm.run()
 
+# def signalHandler(sm, threadClient, sig, frame):
+#     print("SIGNAL: ",sig)
+#     print("FRAME: ",frame)
+#     print("SM:",sm.running)
+#     print("td:", threadClient)
+#     sm.running = False
+#     # sm.stop()
+#     print("SM:",sm.running)
+#     consts.serverConnection = False
+#     # threadClient.join()
+#     signal.pthread_kill(threadClient.get_ident(), sig)
+#     sys.exit(0)
 
-pid = os.fork()
-# threadClient = MyThread(target=clientProgram)
-# threadClient.start()
+def setup(file):
+    with open(file) as configFile:
+        crossing = json.load(configFile)
+    
+    consts.info['id'] = crossing['crossingId']
+    
+    speedRadar1 = SpeedRadar(crossing['speedSensor1'][0], crossing['speedSensor1'][1])
+    speedRadar2 = SpeedRadar(crossing['speedSensor2'][0], crossing['speedSensor2'][1])
+    cross = Cross(crossing['mainTrafficLight'], crossing['secundaryTrafficLight'], crossing['buttons'], crossing['sensor'], [speedRadar1, speedRadar2])
+    stateMachine = StateMachine(cross)
+    
+    return cross, stateMachine
 
-if pid > 0:
-    # Cruamento 1
-    speedRadar1C1 = SpeedRadar(consts.speedSensor1C1[0], consts.speedSensor1C1[1])
-    speedRadar2C1 = SpeedRadar(consts.speedSensor2C1[0], consts.speedSensor2C1[1])
-    cross1 = Cross(consts.sem1C1, consts.sem2C1, consts.btnsC1, consts.sensorC1, [speedRadar1C1, speedRadar2C1])
-    sm1 = StateMachine(cross1)
-    runCross(sm1, cross1)
-else:
-    # Cruamento 2
-    speedRadar1C2 = SpeedRadar(consts.speedSensor1C2[0], consts.speedSensor1C2[1])
-    speedRadar2C2 = SpeedRadar(consts.speedSensor2C2[0], consts.speedSensor2C2[1])
-    cross2 = Cross(consts.sem1C2, consts.sem2C2, consts.btnsC2, consts.sensorC2, [speedRadar1C2, speedRadar2C2])
-    sm2 = StateMachine(cross2)
-    runCross(sm2, cross2)
 
-def signalHandler(sig, frame):
-    sm1.running = False
-    sm2.running = False
-    sm1.stop()
-    sm2.stop()
-    sys.exit(0)
 
-# Tratamento signal
-signal.signal(signal.SIGINT, signalHandler)
-
-# Thread cruzamento 2
-#threadC2 = MyThread(target=runCross,args=(sm2, cross2))
-#threadC2.start()
-# threadClient = MyThread(target=clientProgram)
-
-# Semaforo 1
-# threadClient.start()
-
-#threadC2.join()
-# threadClient.join()
+if __name__ == '__main__':
+    # Tratamento signal
+    cross, sm = setup(sys.argv[1])
+    host = sys.argv[2]
+    port = int(sys.argv[3])
+    
+    # threadSocket = Thread(target=socketTcp, args=(sm, ))
+    threadClient = Thread(target=clientProgram, args=(sm, host, port))
+    
+    # signal.signal(signal.SIGINT, partial(signalHandler, sm, threadClient))
+    # threadSocket.start()
+    threadClient.start()
+    runCross(sm, cross)
+    # threadClient.join()
+    # threadSocket.join()
+    
+    

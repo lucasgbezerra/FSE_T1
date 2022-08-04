@@ -1,0 +1,9 @@
+{
+    "crossingId": 1,
+    "mainTrafficLight": [12, 16, 20],
+    "secundaryTrafficLight": [21, 26, 1],
+    "buttons": [8, 7],
+    "speedSensor1": [18, 23],
+    "speedSensor2": [24, 25],
+    "sensor": [14, 15]
+}
