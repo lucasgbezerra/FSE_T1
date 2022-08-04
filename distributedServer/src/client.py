@@ -32,7 +32,6 @@ def clientProgram(stateMachine, host, port):
 def infoToSever(info):
     global clientSocket
     if clientSocket != None:
-        print("Sending infor")
         clientSocket.send(json.dumps(info).encode())
         
 def closeClient():      

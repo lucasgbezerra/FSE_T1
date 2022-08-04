@@ -87,14 +87,12 @@ class StateMachine:
                     if  self.startTimer == 0:
                         self.idxState = 0
                         self.transiction()
-                        print(self.mode)
                         
                     if time() - self.startTimer >= self.countdown:
                         self.transiction()
                         
                 elif self.mode.upper() == 'N':
                     if  self.startTimer == 0:
-                        print(self.mode)
                         self.idxState = len(self.states) - 2
                         self.nightMode()
                         
@@ -104,12 +102,8 @@ class StateMachine:
                         
                 elif self.mode.upper() == 'E':
                     if self.startTimer == 0:
-                        print(self.mode)
                         self.emergencyMode()
-                        
-                    
-            print("Stop")
-            self.stop()     
+                                            
         except BaseException as err:
-            # print(f"->ERROR: {err}")
+            print(f"->ERROR: {err}")
             self.stop()

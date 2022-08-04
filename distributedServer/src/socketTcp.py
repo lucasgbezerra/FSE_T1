@@ -28,7 +28,6 @@ def socketTcp(stateMachine):
     # Socket no modo listen
     serverSocket.listen(5)
     while True:
-        print("Esperando por uma conexão")
         conn, address = serverSocket.accept()
         print(f"Conectado: {address}")
         threadRead = Thread(target= connectClient, args=(conn, stateMachine))

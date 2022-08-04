@@ -63,10 +63,6 @@ def runCross(sm, cross):
     sm.run()
 
 # def signalHandler(sm, threadClient, sig, frame):
-#     print("SIGNAL: ",sig)
-#     print("FRAME: ",frame)
-#     print("SM:",sm.running)
-#     print("td:", threadClient)
 #     sm.running = False
 #     # sm.stop()
 #     print("SM:",sm.running)

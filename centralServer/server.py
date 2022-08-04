@@ -35,7 +35,6 @@ def socketTcp(host, port):
     
 def trafficInfo(data):
     global crossInfo
-    # print("OK")
     if 'id' not in data.keys():
         return
     if int(data['id']) == 1:

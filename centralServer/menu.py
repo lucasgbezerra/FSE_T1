@@ -19,7 +19,6 @@ def showTrafficInfo():
     
         for info in server.crossInfo:
             if info != None:
-                # print(info)
                 tableP.add_row([info['id'], info['principal']['carros'], info['principal']['velocidadeMedia'], info['principal']['limiteVelocidade'], info['principal']['avancoSinal']])
                 tableA.add_row([info['id'], info['auxiliar']['carros'], info['auxiliar']['avancoSinal']])
         os.system('cls' if os.name == 'nt' else 'clear')
@@ -45,16 +44,16 @@ def menuInfos():
             showTrafficInfo()
         elif inp == 2:
             # Modo de Emergência
-            print("Modo Emergencia")
             server.changeMode('E')
+            print("Modo Emergencia Ativado")
         elif inp == 3:
             # Modo noturno
-            print("Modo Noturno")
             server.changeMode('N')
+            print("Modo Noturno Ativado")
         elif inp == 4:
             # Modo noturno
-            print("Modo Padrão")
             server.changeMode('P')
+            print("Modo Padrão Ativado")
         elif inp == 0:
             break
               
