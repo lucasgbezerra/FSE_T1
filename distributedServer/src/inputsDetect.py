@@ -31,6 +31,7 @@ def detectSpeedSensorA(speedRadar, currentState):
             info['principal']['avancoSinal'] = int(info['principal']['avancoSinal']) + 1
         if speed > speedRadar.speedLimit:
             info['principal']['limiteVelocidade'] = int(info['principal']['limiteVelocidade']) + 1
+        
         infoToSever(info)
            
 
@@ -49,12 +50,10 @@ def detectPassSensor(cross, state):
         if GPIO.input(cross.sensor[1]) == 0:
             info['auxiliar']['avancoSinal'] = int(info['auxiliar']['avancoSinal']) + 1
             info['auxiliar']['carros'] = int(info['auxiliar']['carros']) + 1
-            infoToSever(info)
 
-    if state.currentState[1] == GREEN:
+    if state.currentState[1] != RED:
         if GPIO.input(cross.sensor[1]) == 0:
-            info['auxiliar']['avancoSinal'] = int(info['auxiliar']['avancoSinal']) + 1
-            infoToSever(info)
+            info['auxiliar']['carros'] = int(info['auxiliar']['carros']) + 1
             
 
     if state.currentState[1] == RED:
@@ -63,12 +62,11 @@ def detectPassSensor(cross, state):
         if GPIO.input(cross.sensor[0]) == 0:
             info['auxiliar']['carros'] = int(info['auxiliar']['carros']) + 1
             info['auxiliar']['avancoSinal'] = int(info['auxiliar']['avancoSinal']) + 1
-            infoToSever(info)
 
-    if state.currentState[1] == GREEN:
+    if state.currentState[1] != RED:
         if GPIO.input(cross.sensor[0]) == 0:
             info['auxiliar']['carros'] = int(info['auxiliar']['carros']) + 1
-            infoToSever(info)
+    infoToSever(info)
 
             
                 

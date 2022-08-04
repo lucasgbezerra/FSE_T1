@@ -20,7 +20,7 @@ def signalHandler(sig, frame):
 def socketTcp(host, port):
     global serverConn
     
-    # Instancia do serverConn
+    # Instancia do server
     serverSocket = socket.socket()
     # Servidor escuta requisições de qualquer ip
     serverSocket.bind(('', port))

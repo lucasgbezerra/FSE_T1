@@ -1,7 +1,6 @@
 import socket
 import json
-from time import sleep
-from constants import serverConnection, info
+
 
 command = 'P'
 clientSocket = None
@@ -17,14 +16,14 @@ def clientProgram(stateMachine, host, port):
     global clientSocket
     global command
     
-    clientSocket = socket.socket()  # instantiate
+    clientSocket = socket.socket()  
     
     message = {"Connect": True}
-    clientSocket.connect((host, port))  # connect to the server
-    clientSocket.send(json.dumps(message).encode())  # send message
+    clientSocket.connect((host, port))
+    clientSocket.send(json.dumps(message).encode()) 
     while True:
         
-        data = clientSocket.recv(1024).decode() # receive response
+        data = clientSocket.recv(1024).decode()
         if data != command:
             responseHandle(stateMachine, data)
 
@@ -35,4 +34,4 @@ def infoToSever(info):
         clientSocket.send(json.dumps(info).encode())
         
 def closeClient():      
-    clientSocket.close()  # close the connection
+    clientSocket.close()

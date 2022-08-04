@@ -14,8 +14,7 @@ MIN_RED_GREEN = 1
 BOTH_RED = 1
 ATTENTION = 1
 
-# global
-serverConnection = True
+
 
 # Modelo JSON
 info = {

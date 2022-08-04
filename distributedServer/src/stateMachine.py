@@ -81,7 +81,6 @@ class StateMachine:
     def run(self):
         self.running = True
         try:
-            # self.set_start()
             while self.running:
                 if self.mode.upper() == 'P':
                     if  self.startTimer == 0:

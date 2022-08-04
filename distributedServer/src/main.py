@@ -87,19 +87,15 @@ def setup(file):
 
 
 if __name__ == '__main__':
-    # Tratamento signal
     cross, sm = setup(sys.argv[1])
     host = sys.argv[2]
     port = int(sys.argv[3])
     
-    # threadSocket = Thread(target=socketTcp, args=(sm, ))
     threadClient = Thread(target=clientProgram, args=(sm, host, port))
     
-    # signal.signal(signal.SIGINT, partial(signalHandler, sm, threadClient))
-    # threadSocket.start()
+
     threadClient.start()
     runCross(sm, cross)
-    # threadClient.join()
-    # threadSocket.join()
+
     
     
