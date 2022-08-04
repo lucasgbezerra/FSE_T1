@@ -16,25 +16,25 @@ def detectBtn(cross, state):
 
 
 def detectSpeedSensorA(speedRadar, currentState):
+    global info
+
     sensorA = GPIO.input(speedRadar.sensorA)
     if sensorA == 1:
         speedRadar.timeA = time.time()
         speed = speedRadar.averageSpeed()
-        pri = info['principal']
-        if pri['carros'] == 0:
-            pri['carros'] += 1
-            pri['carros']['velocidadeMedia'] += speed
+        if info['principal']['carros'] == 0:
+            info['principal']['carros'] = info['principal']['carros'] +1
+            info['principal']['velocidadeMedia']  += speed
         else:
-            info['numberCars'][1]['cars'] += 1
-            pri['carros'] += 1
-            pri['carros']['velocidadeMedia'] += (pri['velocidadeMedia'] + speed )/2
+            info['principal']['carros'] = info['principal']['carros'] + 1
+            info['principal']['velocidadeMedia'] = float(info['principal']['velocidadeMedia']) +(float(info['principal']['velocidadeMedia']) + speed )/2
             
         if currentState[0] == RED:
             print("Furou sinal")
-            pri['avancoSinal']
+            info['principal']['avancoSinal'] = int(info['principal']['avancoSinal']) + 1
         if speed > speedRadar.speedLimit:
             print("Acima do limite de velocidade")
-            pri['limiteVelocidade']
+            info['principal']['limiteVelocidade'] = int(info['principal']['limiteVelocidade']) + 1
         infoToSever(info)
            
 
@@ -49,20 +49,20 @@ def detectPassSensor(cross, state):
     sensor0 = GPIO.input(cross.sensor[0])
     sensor1 = GPIO.input(cross.sensor[1])
     # print(f"Estado: {state.currentState} | Sensor 0: {sensor0} | Sensor 1: {sensor1}")
-    aux = info['auxiliar']
+    info['auxiliar'] = info['auxiliar']
     if state.currentState[1] == RED:
         if sensor1 == 1:
             print("S1: Eperando abrir")
             state.countdown = MIN_GREEN_RED
         if sensor1 == 0:
-            aux['avancoSinal'] += 1
-            aux['carros'] += 1
+            info['auxiliar']['avancoSinal'] = int(info['auxiliar']['avancoSinal']) + 1
+            info['auxiliar']['carros'] = int(info['auxiliar']['carros']) + 1
             print("S1: Furou sinal")
             infoToSever(info)
 
     if state.currentState[1] == GREEN:
         if sensor1 == 0:
-            aux['avancoSinal'] += 1
+            info['auxiliar']['avancoSinal'] = int(info['auxiliar']['avancoSinal']) + 1
             print("S1: Carro passou")
             infoToSever(info)
             
@@ -73,14 +73,14 @@ def detectPassSensor(cross, state):
             state.countdown = MIN_GREEN_RED
         if sensor0 == 0:
             print("S0: Furou sinal")
-            aux['carros'] += 1
-            aux['avancoSinal'] += 1
+            info['auxiliar']['carros'] = int(info['auxiliar']['carros']) + 1
+            info['auxiliar']['avancoSinal'] = int(info['auxiliar']['avancoSinal']) + 1
             infoToSever(info)
 
     if state.currentState[1] == GREEN:
         if sensor0 == 0:
             print("S0: Carro passou")
-            aux['carros'] += 1
+            info['auxiliar']['carros'] = int(info['auxiliar']['carros']) + 1
             infoToSever(info)
 
             

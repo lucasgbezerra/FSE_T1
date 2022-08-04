@@ -19,7 +19,7 @@ def showTrafficInfo():
     
         for info in server.crossInfo:
             if info != None:
-                print(info)
+                # print(info)
                 tableP.add_row([info['id'], info['principal']['carros'], info['principal']['velocidadeMedia'], info['principal']['limiteVelocidade'], info['principal']['avancoSinal']])
                 tableA.add_row([info['id'], info['auxiliar']['carros'], info['auxiliar']['avancoSinal']])
         os.system('cls' if os.name == 'nt' else 'clear')
