@@ -50,3 +50,6 @@ python main.py crossing1.json 164.41.98.17 10262
 - Executando o projeto
 ![](https://raw.githubusercontent.com/lucasgbezerra/FSE_T1/54b7b718e4a2504dc9b9319bc6f606bb89efcb26/imgs/img2.png)
 ![](https://raw.githubusercontent.com/lucasgbezerra/FSE_T1/main/imgs/img.png)
+
+- GIF
+![](https://i.imgur.com/7eKyAaM.gif)
