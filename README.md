@@ -43,7 +43,7 @@ python main.py crossing1.json 164.41.98.17 10262
 - Cruzamento 2:
 
 ```
-python main.py crossing1.json 164.41.98.17 10262
+python main.py crossing2.json 164.41.98.17 10262
 ```
 
 ## Uso
