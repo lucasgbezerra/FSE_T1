@@ -19,7 +19,7 @@ def signalHandler(sig, frame):
         closeConnections()
     signal.pthread_kill(current_thread().ident, signal.SIGKILL)
         
-def socketTcp(port):
+def socketTcp(host, port):
     global serverConn
     
     # Instancia do server
