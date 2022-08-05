@@ -10,11 +10,11 @@ class StateMachine:
         self.currentState = None
         self.idxState = 0
         self.states = []
-        self.nightStates = []
         self.countdown = 0
         self.cross = cross
         self.running = False
         self.mode = 'P'
+        self.changeMode = False
 
     def addState(self, sem1, sem2, timer):
         self.states.append((sem1, sem2, timer))
@@ -83,26 +83,31 @@ class StateMachine:
         try:
             while self.running:
                 if self.mode.upper() == 'P':
-                    if  self.startTimer == 0:
+                    if  self.changeMode:
+                        self.changeMode = False
+                        print("Modo PADRÃO ativado")
                         self.idxState = 0
                         self.transiction()
                         
-                    if time() - self.startTimer >= self.countdown:
+                    elif time() - self.startTimer >= self.countdown:
                         self.transiction()
                         
                 elif self.mode.upper() == 'N':
-                    if  self.startTimer == 0:
+                    if  self.changeMode:
+                        self.changeMode = False
+                        print("Modo NOTURNO ativado")
                         self.idxState = len(self.states) - 2
                         self.nightMode()
                         
-                        
-                    if time() - self.startTimer >= self.countdown:
+                    elif time() - self.startTimer >= self.countdown:
                         self.nightMode()
                         
                 elif self.mode.upper() == 'E':
-                    if self.startTimer == 0:
+                    if  self.changeMode:
+                        self.changeMode = False
+                        print("Modo EMERGÊNCIA ativado")
                         self.emergencyMode()
                                             
         except BaseException as err:
-            print(f"->ERROR: {err}")
             self.stop()
+            print(f"->ERROR: {err}")

@@ -4,13 +4,15 @@ import json
 
 command = 'P'
 clientSocket = None
-
+connected = True
 def responseHandle(stateMachine, data):
     global command
     command = data
-    stateMachine.countdown = 0
+    print("Commando", command)
     stateMachine.startTimer = 0
-    stateMachine.mode = data
+    stateMachine.changeMode = True
+    stateMachine.mode = command
+    
         
 def clientProgram(stateMachine, host, port):
     global clientSocket
@@ -20,13 +22,16 @@ def clientProgram(stateMachine, host, port):
     
     message = {"Connect": True}
     clientSocket.connect((host, port))
+    print(f"Conectado: {host}:{port}")
     clientSocket.send(json.dumps(message).encode()) 
-    while True:
-        
-        data = clientSocket.recv(1024).decode()
-        if data != command:
-            responseHandle(stateMachine, data)
-
+    try:
+        while connected:
+            data = clientSocket.recv(1024).decode()
+            if data in ['P', 'N', 'E']:
+                responseHandle(stateMachine, data)
+    except socket.error as error:
+        print(error)
+        closeClient()
 
 def infoToSever(info):
     global clientSocket
