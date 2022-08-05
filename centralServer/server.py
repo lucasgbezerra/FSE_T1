@@ -15,13 +15,11 @@ def signalHandler(sig, frame):
     global clients
     serverConn = False
     clients = False
-    # print("signalHandler")
     if len(conns) > 0:
         closeConnections()
-    current_thread_id = current_thread().ident
-    signal.pthread_kill(current_thread_id, signal.SIGKILL)
+    signal.pthread_kill(current_thread().ident, signal.SIGKILL)
         
-def socketTcp(host, port):
+def socketTcp(port):
     global serverConn
     
     # Instancia do server
@@ -30,13 +28,17 @@ def socketTcp(host, port):
     serverSocket.bind(('', port))
     # Socket no modo listen
     serverSocket.listen(1)
-    while serverConn:
-        conn, address = serverSocket.accept()
-        # print(f"Conectado: {address}")
-        conns.append(conn)
-        threadRead = Thread(target= connectClients, args=(conn, ))
-        threadRead.start() 
-    threadRead.join()
+    try:
+        while serverConn:
+            conn, address = serverSocket.accept()
+            # print(f"Conectado: {address}")
+            conns.append(conn)
+            threadRead = Thread(target= connectClients, args=(conn, ))
+            threadRead.start() 
+    except socket.error as error:
+        closeConnections()
+        print(error)
+        threadRead.join()
     
 def trafficInfo(data):
     global crossInfo
@@ -50,7 +52,7 @@ def trafficInfo(data):
 
 def closeConnections():
     global conns
-    global clients
+
     for conn in conns:
         conn.close()
            
@@ -69,6 +71,9 @@ def connectClients(conn):
         
 def changeMode(mode):
     global conns
-    
-    for conn in conns:
-        conn.send(bytes(mode, 'utf-8'))
+    try:
+        for conn in conns:
+            conn.send(bytes(mode, 'utf-8'))
+    except conn.error as error:
+        closeConnections
+        print(error)

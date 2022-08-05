@@ -2,9 +2,10 @@
 import signal
 from texttable import Texttable
 from time import sleep
-from threading import Thread
+from threading import Thread, current_thread
 import server
 import os
+import sys
 
 runningObsMode = True
 def showTrafficInfo():
@@ -33,6 +34,9 @@ def showTrafficInfo():
         print("Via auxiliar:")
         print(tableA.draw())
         sleep(1)
+        
+def exitMenu():
+    os.kill(os.getpid(), signal.SIGINT)
 
 def menuInfos():
     global runningObsMode
@@ -48,8 +52,8 @@ def menuInfos():
         print("0 - Sair")
         inp = int(input("Escolha a opção: "))
         if inp == 1:
-            runningObsMode = True
             # Observação do trafego
+            runningObsMode = True
             showTrafficInfo()
         elif inp == 2:
             # Modo de Emergência
@@ -63,19 +67,16 @@ def menuInfos():
             # Modo noturno
             print("Modo Padrão Ativado")
             server.changeMode('P')
-        elif inp == 0:
-            print("OK")
+        else:
             break
-
+    exitMenu()
 def backToMenu(sig, frame):
     global runningObsMode
     runningObsMode = False
-    print("Foi")
 
 def menu():
     signal.signal(signal.SIGTSTP, backToMenu)
     menuThread = Thread(target=menuInfos)
     menuThread.start()
-    # print("join menu")
     menuThread.join()
     
