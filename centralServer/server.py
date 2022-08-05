@@ -1,21 +1,25 @@
 from http import client
-from threading import Thread
+from threading import Thread, current_thread
 import socket
 import json
 import sys
+import signal
 
 conns = []
 crossInfo = [None, None]
 clients = True
 serverConn = True
+
 def signalHandler(sig, frame):
     global serverConn
     global clients
     serverConn = False
     clients = False
+    # print("signalHandler")
     if len(conns) > 0:
         closeConnections()
-    sys.exit(0)
+    current_thread_id = current_thread().ident
+    signal.pthread_kill(current_thread_id, signal.SIGKILL)
         
 def socketTcp(host, port):
     global serverConn
@@ -28,10 +32,11 @@ def socketTcp(host, port):
     serverSocket.listen(1)
     while serverConn:
         conn, address = serverSocket.accept()
-        print(f"Conectado: {address}")
+        # print(f"Conectado: {address}")
         conns.append(conn)
         threadRead = Thread(target= connectClients, args=(conn, ))
-        threadRead.start()  
+        threadRead.start() 
+    threadRead.join()
     
 def trafficInfo(data):
     global crossInfo

@@ -1,16 +1,20 @@
 # Servidor Central
+import signal
 from texttable import Texttable
 from time import sleep
 from threading import Thread
 import server
 import os
 
+runningObsMode = True
 def showTrafficInfo():
+    global runningObsMode
     
     if len(server.conns) == 0:
         print("Nenhum Servidor Distribuido conectado")
+        sleep(1)
         return
-    while True:
+    while runningObsMode:
         tableP = Texttable()
         tableA = Texttable()
 
@@ -21,8 +25,9 @@ def showTrafficInfo():
             if info != None:
                 tableP.add_row([info['id'], info['principal']['carros'], info['principal']['velocidadeMedia'], info['principal']['limiteVelocidade'], info['principal']['avancoSinal']])
                 tableA.add_row([info['id'], info['auxiliar']['carros'], info['auxiliar']['avancoSinal']])
+        
         os.system('cls' if os.name == 'nt' else 'clear')
-        print("Pressione CTRL-C para SAIR")
+        print("Pressione CTRL-Z para SAIR")
         print("Via principal:")
         print(tableP.draw())
         print("Via auxiliar:")
@@ -30,7 +35,10 @@ def showTrafficInfo():
         sleep(1)
 
 def menuInfos():
-    while True:
+    global runningObsMode
+    inp = -1
+    
+    while inp != 0:
         os.system('cls' if os.name == 'nt' else 'clear')
         print("----- Controle do Cruzamento -------")
         print("1 - Modo de observação do trafego")
@@ -40,25 +48,34 @@ def menuInfos():
         print("0 - Sair")
         inp = int(input("Escolha a opção: "))
         if inp == 1:
+            runningObsMode = True
             # Observação do trafego
             showTrafficInfo()
         elif inp == 2:
             # Modo de Emergência
-            server.changeMode('E')
             print("Modo Emergencia Ativado")
+            server.changeMode('E')
         elif inp == 3:
             # Modo noturno
-            server.changeMode('N')
             print("Modo Noturno Ativado")
+            server.changeMode('N')
         elif inp == 4:
             # Modo noturno
-            server.changeMode('P')
             print("Modo Padrão Ativado")
+            server.changeMode('P')
         elif inp == 0:
+            print("OK")
             break
-              
+
+def backToMenu(sig, frame):
+    global runningObsMode
+    runningObsMode = False
+    print("Foi")
 
 def menu():
+    signal.signal(signal.SIGTSTP, backToMenu)
     menuThread = Thread(target=menuInfos)
     menuThread.start()
+    # print("join menu")
     menuThread.join()
+    

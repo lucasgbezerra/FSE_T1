@@ -13,3 +13,4 @@ if __name__ == '__main__':
     threadSocket = Thread(target=socketTcp, args=(host, port))
     threadSocket.start()
     menu()
+    threadSocket.join()
