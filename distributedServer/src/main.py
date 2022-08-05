@@ -13,12 +13,10 @@ def runCross(sm, cross):
     sm.run()
 
 def signalHandler(sm, sig, frame):
-    # print("exit")
     sm.running = False
     sm.stop()
     consts.serverConnection = False
     signal.pthread_kill(current_thread().ident, signal.SIGKILL)
-    # sys.exit()
 
 
 if __name__ == '__main__':

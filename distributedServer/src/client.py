@@ -8,7 +8,6 @@ connected = True
 def responseHandle(stateMachine, data):
     global command
     command = data
-    print("Commando", command)
     stateMachine.startTimer = 0
     stateMachine.changeMode = True
     stateMachine.mode = command

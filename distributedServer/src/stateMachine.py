@@ -52,9 +52,10 @@ class StateMachine:
             self.idxState = len(self.states) - 1
         else:
             self.idxState = len(self.states) - 2
-        self.currentState = self.states[self.idxState]
-        self.countdown = self.currentState[2]
-        self.controller(self.currentState[0], self.currentState[1])
+        if self.idxState < len(self.states):
+            self.currentState = self.states[self.idxState]
+            self.countdown = self.currentState[2]
+            self.controller(self.currentState[0], self.currentState[1])
         
     def emergencyMode(self):
         self.startTimer = -1
@@ -110,4 +111,4 @@ class StateMachine:
                                             
         except BaseException as err:
             self.stop()
-            print(f"->ERROR: {err}")
+            print(f"ERROR: {err}")
